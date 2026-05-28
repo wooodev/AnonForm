@@ -1,0 +1,35 @@
+# 로컬 개발용: PostgreSQL + Redis만 실행
+# 앱은 IDE에서 직접 실행
+# 사용법: docker-compose -f docker-compose.dev.yml up -d
+
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: anonform-postgres
+    environment:
+      POSTGRES_DB: anonform
+      POSTGRES_USER: anonform
+      POSTGRES_PASSWORD: anonform
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U anonform -d anonform"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: anonform-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
